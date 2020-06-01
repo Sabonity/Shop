@@ -5,8 +5,8 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 
 //Import Route
-// const productRoute = require('./routes/ProductRoute/product');
-const userRoute = require('./routes/UserRoute/userAuth');
+const productRoute = require('./routes/ProductRoute/productService');
+const userRoute = require('./routes/UserRoute/userService');
 
 //Attempting to connect to the mongoDB Atlas
 
@@ -21,6 +21,7 @@ mongoose.connect(process.env.DB_CONNECT,
 app.use(express.json());
 
 app.use('/', userRoute);
+app.use('/product', productRoute);
 
 
 app.listen(3000, () => console.log('Server Up and running'));

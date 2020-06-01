@@ -1,32 +1,35 @@
 /*
-  Router design for user related processes
+  This router is design for user related processes(API services)
   (Registration and Login)
 */
 
 //Import dependency
 const router = require('express').Router();
-const User = require('../../model/User');
+const User = require('../../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 //Joi validation dependency
 const { userRegistrationValidation, userLoginValidation } = require('../../validation/userValidation');
 
+//Initliazing standard response
+let response = {
+    success: false,
+    message: ""
+}
+
+
 //Account creation for the user
 router.post('/register', async (req, res) => {
 
     //Initialize a standard response
-    let response = {
-        success: false,
-        responseMessage: "Account registraion was successful"
-    }
 
     // validation of userInput for the registration process
     const validation = userRegistrationValidation(req.body);
 
     if ('error' in validation) {
         const { error } = validation;
-        response.responseMessage = errorMessageTrim(error.details[0].message);
+        response.message = errorMessageTrim(error.details[0].message);
         return res.status(404).send(response);
     }
 
@@ -43,7 +46,7 @@ router.post('/register', async (req, res) => {
     console.log(checkingResult);
 
     if (checkingResult.success === false) {
-        response.responseMessage = checkingResult.message;
+        response.message = checkingResult.message;
         return res.status(404).send(response);
     }
 
@@ -52,6 +55,7 @@ router.post('/register', async (req, res) => {
 
     try {
         const createNewUser = await newUser.save();
+        response.message = 'Account registraion was successful';
         return res.status(200).send(response);
     } catch (error) {
         console.log(error);
@@ -63,16 +67,12 @@ router.post('/register', async (req, res) => {
 
 //Account Sign in process
 router.post('/login', async (req, res) => {
-    let response = {
-        success: false,
-        responseMessage: "Login successful"
-    }
 
     //Input validation
     let validation = userLoginValidation(req.body);
     if ('error' in validation) {
         const { error } = validation;
-        response.responseMessage = error.details[0].message;
+        response.message = error.details[0].message;
         return res.status(404).send(response);
     }
 
@@ -82,19 +82,22 @@ router.post('/login', async (req, res) => {
         const userAccount = await User.findOne({ userName: req.body.userName });
 
         if (userAccount === null) {
-            response.responseMessage = "Login unsuccessful. Incorrect username or password";
+            response.message = "Login unsuccessful. Incorrect username or password";
             return res.status(404).send(response);
         }
 
         //Comparing user input password to the hashed password
         const validPass = await bcrypt.compare(req.body.password, userAccount.password);
         if (!validPass) {
-            response.responseMessage = "Login unsuccessful. Incorrect username or password";
+            response.message = "Login unsuccessful. Incorrect username or password";
             return res.status(404).send(response);
         }
+
+        //Token creation
         const token = jwt.sign({ _id: userAccount._id }, process.env.TOKEN_SECRET, { expiresIn: '2h' });
-        
+
         response.success = true;
+        response.message = 'Login successful';
         res.setHeader('auth-token', token);
         return res.status(200).send(response);
     } catch (error) {
