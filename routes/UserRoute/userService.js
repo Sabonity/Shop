@@ -6,6 +6,7 @@
 //Import dependency
 const router = require('express').Router();
 const User = require('../../models/User');
+const Cart = require('../../models/Cart');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -55,6 +56,13 @@ router.post('/register', async (req, res) => {
 
     try {
         const createNewUser = await newUser.save();
+        const createCart = new Cart({
+            userId: createNewUser._id,
+            total: 0,
+            cartFlag: 1
+        })
+        await createCart.save();
+        response.success = true;
         response.message = 'Account registraion was successful';
         return res.status(200).send(response);
     } catch (error) {
