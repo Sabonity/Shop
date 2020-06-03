@@ -96,7 +96,6 @@ const regsitrationController = async (userData) => {
         });
 
         await createCart.save();
-
         controllerResponse.message = 'Account registraion was successful';
         controllerResponse.success = true;
     } catch (error) {

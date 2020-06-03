@@ -1,7 +1,9 @@
 const User = require('../models/User.js');
 const Product = require('../models/Product');
+const Cart = require('../models/Cart');
 
 const { productCreationValidation } = require('../validation/productValidation');
+const { computeTotalPrice } = require('./cartController');
 
 
 const getProductById = async (productId) => {
@@ -78,7 +80,7 @@ const productDeletion = async ({ user_id, product_Id }) => {
 
         //Product deletion
         await Product.findByIdAndDelete({ _id: product_Id });
-
+        await updateProductsInUsersCart({ data: "", productId: product_Id, process : "DELETE" });
         controllerResponse.message = 'Product was successfully deleted';
         controllerResponse.success = true;
     } catch (error) {
@@ -88,6 +90,7 @@ const productDeletion = async ({ user_id, product_Id }) => {
         return controllerResponse;
     }
 }
+
 
 const productUpdate = async ({ user_id, product_Id, data }) => {
     let controllerResponse = {
@@ -108,13 +111,13 @@ const productUpdate = async ({ user_id, product_Id, data }) => {
             controllerResponse.message = isValidForNewProduct.message;
             return controllerResponse
         }
-    
+
         let productUpdate = await Product.findOneAndUpdate({ _id: accessAndProduct.message._id }, data, {
             new: true,
             useFindAndModify: false
         });
-        await productUpdate.save();
-
+        await productUpdate.save(data);
+        await updateProductsInUsersCart({ data: data, productId: product_Id,  process : "UPDATE" });
         controllerResponse.message = 'Product was successfully deleted';
         controllerResponse.success = true;
     } catch (error) {
@@ -125,6 +128,49 @@ const productUpdate = async ({ user_id, product_Id, data }) => {
     }
 }
 
+
+
+const updateProductsInUsersCart = async ({ data, productId, process }) => {
+    try {
+        let cartThatNeedToUpdate = await Cart.find({ "products.productId": productId, cartFlag: true });
+        if (cartThatNeedToUpdate === null) return true;
+
+        //Itereate in the captured cart(cart that contain the product id);
+        cartThatNeedToUpdate.map(async cart => {     
+            let products = cart.products;
+            let index = products.findIndex(product => (product.productId === productId));
+            console.log(process);
+            //Update the data inside the cart
+            if(process === "UPDATE") {
+                //Update the price with the targeted index
+                updateProducts(products, index, data);
+            }else {
+                //Delete the product from the products
+                deleteProduct(products, index);
+            }
+            
+            //compute for the total price
+            computeTotalPrice(cart);
+
+            //save the updated cart
+            let updateCart = await Cart.findOneAndUpdate({ _id: cart.id }, cart, {
+                new: true,
+                useFindAndModify: false
+            })
+            await updateCart.save();
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const deleteProduct = (products, index) => {
+    products.splice(index, 1);
+}
+
+const updateProducts = (products, index, updatedProductDetails) => {
+    products[index].price = products[index].quantity * updatedProductDetails.price;
+}
 
 /*
     Reusable Code

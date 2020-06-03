@@ -10,9 +10,6 @@ const router = require('express').Router();
 const { loginController, regsitrationController } = require('../controllers/userController');
 
 
-
-
-
 //Account creation for the user
 router.post('/register', async (req, res) => {
     //Initliazing standard response
@@ -22,12 +19,14 @@ router.post('/register', async (req, res) => {
     }
     try {
         let isSuccessfulRegsitration = await regsitrationController(req.body);
-        if (!isSuccessfulRegsitration.sucess) {
+        console.log(isSuccessfulRegsitration);
+        if (!isSuccessfulRegsitration.success) {
             response.message = isSuccessfulRegsitration.message;
             return res.status(404).send(response);
         }
         response.success = true;
         response.message = isSuccessfulRegsitration.message;
+        console.log(`Response: ` + response);
         return res.status(200).send(response);
     } catch (error) {
         console.log(error);

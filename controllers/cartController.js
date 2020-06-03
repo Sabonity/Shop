@@ -209,7 +209,7 @@ const savingProducInCart = async (productData, productDetails, cartDetails, toDo
                     quantity: productData.quantity,
                     price: productData.quantity * productDetails.price
                 };
-                console.log(productObject);
+                // console.log(productObject);
                 cartDetails.products.push(productObject);
                 computeTotalPrice(cartDetails);
                 await updateProductsInCart(cartDetails);
@@ -266,3 +266,4 @@ module.exports.viewCart = viewCart;
 module.exports.addProductToCart = addProductToCart;
 module.exports.deletProductInCart = deletProductInCart;
 module.exports.editProductInCart = editProductInCart;
+module.exports.computeTotalPrice = computeTotalPrice;
