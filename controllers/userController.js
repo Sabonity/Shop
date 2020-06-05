@@ -32,11 +32,9 @@ const loginController = async (userData) => {
         //Comparing user input password to the hashed password
         const validPass = await bcrypt.compare(userData.password, userAccount.password);
         if (!validPass) {
-            console.log("loginController1");
             controllerResponse.message = "Login unsuccessful. Incorrect username or password";
             return controllerResponse;
         }
-        console.log("loginController1");
         //Token creation
         const token = jwt.sign({ _id: userAccount._id }, process.env.TOKEN_SECRET, { expiresIn: '10h' });
 

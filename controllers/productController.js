@@ -136,7 +136,7 @@ const updateProductsInUsersCart = async ({ data, productId, process }) => {
         if (cartThatNeedToUpdate === null) return true;
 
         //Itereate in the captured cart(cart that contain the product id);
-        cartThatNeedToUpdate.map(async cart => {     
+        await Promise.all(cartThatNeedToUpdate.map(async cart => {     
             let products = cart.products;
             let index = products.findIndex(product => (product.productId === productId));
             console.log(process);
@@ -158,7 +158,7 @@ const updateProductsInUsersCart = async ({ data, productId, process }) => {
                 useFindAndModify: false
             })
             await updateCart.save();
-        })
+        }));
     } catch (error) {
         console.log(error);
     }
