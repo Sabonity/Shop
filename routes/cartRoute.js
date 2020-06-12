@@ -37,7 +37,7 @@ router.get('/', tokenVerification, async (req, res) => {
 });
 
 //Add product to the cart
-router.post('/addProduct', tokenVerification, async (req, res) => {
+router.post('/', tokenVerification, async (req, res) => {
   let response = {
     success: false,
     message: ''
@@ -59,7 +59,7 @@ router.post('/addProduct', tokenVerification, async (req, res) => {
 });
 
 //Delete product from the cart
-router.delete('/deleteProduct/:productId', tokenVerification, async (req, res) => {
+router.delete('/:productId', tokenVerification, async (req, res) => {
   let response = {
     success: false,
     message: ''
@@ -86,7 +86,7 @@ router.delete('/deleteProduct/:productId', tokenVerification, async (req, res) =
 
 
 //Update product from the cart
-router.put('/editProduct', tokenVerification, async (req, res) => {
+router.put('/', tokenVerification, async (req, res) => {
   let response = {
     success: false,
     message: ''

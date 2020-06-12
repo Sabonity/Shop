@@ -14,7 +14,7 @@ let response = {
     message: ''
 };
 
-router.post('/placeOrder/:id', tokenVerification, async (req, res) => {
+router.post('/:id', tokenVerification, async (req, res) => {
     try {
         clearResponse();
         let data = {
@@ -74,7 +74,7 @@ router.get('/orderHistory', tokenVerification, async (req, res) => {
     }
 });
 
-router.put('/updateOrder', tokenVerification, async (req, res) => {
+router.put('/', tokenVerification, async (req, res) => {
     try {
         clearResponse();
         let orderUpdate = await updatePlacedOrder({

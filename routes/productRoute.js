@@ -59,7 +59,7 @@ router.get("/:id", tokenVerification, async (req, res) => {
 
 
 //Creation of new product
-router.post("/addProduct", tokenVerification, async (req, res) => {
+router.post("/", tokenVerification, async (req, res) => {
     //Initliazing standard response
     let response = {
         success: false,
@@ -86,7 +86,7 @@ router.post("/addProduct", tokenVerification, async (req, res) => {
 });
 
 //Product deletion
-router.delete('/deleteProduct/:id', tokenVerification, async (req, res) => {
+router.delete('/:id', tokenVerification, async (req, res) => {
     //Initliazing standard response
     let response = {
         success: false,
@@ -113,7 +113,7 @@ router.delete('/deleteProduct/:id', tokenVerification, async (req, res) => {
 });
 
 
-router.put('/updateProduct/:id', tokenVerification, async (req, res) => {
+router.put('/:id', tokenVerification, async (req, res) => {
     //Initliazing standard response
     let response = {
         success: false,
