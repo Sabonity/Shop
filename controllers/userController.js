@@ -25,14 +25,14 @@ const loginController = async (userData) => {
         const userAccount = await User.findOne({ userName: userData.userName });;
 
         if (userAccount === null) {
-            controllerResponse.message = "Login unsuccessful. Incorrect username or password";
+            controllerResponse.message = "Incorrect username or password";
             return controllerResponse;
         }
 
         //Comparing user input password to the hashed password
         const validPass = await bcrypt.compare(userData.password, userAccount.password);
         if (!validPass) {
-            controllerResponse.message = "Login unsuccessful. Incorrect username or password";
+            controllerResponse.message = "Incorrect username or password";
             return controllerResponse;
         }
         //Token creation
