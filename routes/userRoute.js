@@ -48,6 +48,8 @@ router.post('/login', async (req, res) => {
             return res.status(404).send(response);
         }
         res.setHeader('auth-Token', isValidAccount.authToken);
+        response.userData = isValidAccount.userData;
+        response.access = isValidAccount.access;
         response.message = isValidAccount.message;
         response.success = true;
         return res.status(200).send(response);

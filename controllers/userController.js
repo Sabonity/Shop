@@ -37,9 +37,9 @@ const loginController = async (userData) => {
         }
         //Token creation
         const token = jwt.sign({ _id: userAccount._id }, process.env.TOKEN_SECRET, { expiresIn: '10h' });
-
-
+        controllerResponse.userData = userAccount.userData;
         controllerResponse.message = 'Login successful';
+        controllerResponse.access = userAccount.access;
         controllerResponse.authToken = token;
         controllerResponse.success = true;
     } catch (error) {
