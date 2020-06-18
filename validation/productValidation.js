@@ -15,7 +15,6 @@ const productCreationValidation = data => {
             .max(10000)
             .required(),
         price: Joi.number()
-            .integer()
             .min(0)
             .max(10000)
             .required()
